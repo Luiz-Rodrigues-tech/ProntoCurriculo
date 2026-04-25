@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+/* Class-based dark mode for Tailwind v4 */
+@variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: #ffffff;
+  color: #171717;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.dark body {
+  background: #09090b;
+  color: #f4f4f5;
+}
+
+/* Fix placeholder visibility — Tailwind v4 defaults to near-transparent */
+::placeholder {
+  color: #94a3b8;
+  opacity: 1;
+}
+
+.dark ::placeholder {
+  color: #52525b;
+  opacity: 1;
+}
+
+/* Hide scrollbar on horizontal pill rows while keeping scroll behaviour */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
