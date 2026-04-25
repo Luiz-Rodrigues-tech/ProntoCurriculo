@@ -62,7 +62,7 @@ const STEP_COMPONENTS: Record<number, React.ComponentType> = {
   4: StepSkills,
 };
 
-export default function ResumeForm() {
+export default function ResumeForm({ onGoToPreview }: { onGoToPreview?: () => void }) {
   const { currentStep, setCurrentStep, maxStepReached, data, updateTemplate, updateAccentColor, updateFont, toggleExecutiveLine } =
     useResumeStore();
 
@@ -234,9 +234,19 @@ export default function ResumeForm() {
             Próximo →
           </button>
         ) : (
-          <div className="flex items-center gap-1.5 rounded-lg bg-green-100 dark:bg-green-950 px-4 py-2.5 text-sm font-semibold text-green-700 dark:text-green-400 md:py-2">
-            ✅ Tudo preenchido!
-          </div>
+          <>
+            {/* Mobile: botão que leva ao Preview */}
+            <button
+              onClick={onGoToPreview}
+              className="flex items-center gap-1.5 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm transition active:scale-95 md:hidden"
+            >
+              Ver preview e baixar →
+            </button>
+            {/* Desktop: badge estático */}
+            <div className="hidden items-center gap-1.5 rounded-lg bg-green-100 dark:bg-green-950 px-4 py-2 text-sm font-semibold text-green-700 dark:text-green-400 md:flex">
+              ✅ Tudo preenchido!
+            </div>
+          </>
         )}
       </div>
     </div>

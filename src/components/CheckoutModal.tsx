@@ -5,7 +5,7 @@ import { initMercadoPago, Payment } from "@mercadopago/sdk-react";
 import type { IPaymentFormData } from "@mercadopago/sdk-react/esm/bricks/payment/type";
 import { useResumeStore } from "@/store/resumeStore";
 
-const PUBLIC_KEY = process.env.NEXT_PUBLIC_MP_PUBLIC_KEY!;
+const PUBLIC_KEY = process.env.NEXT_PUBLIC_MP_PUBLIC_KEY ?? "";
 const PRICE = 9.9;
 const POLL_INTERVAL = 3000;
 
@@ -56,9 +56,13 @@ export default function CheckoutModal({ onClose }: { onClose: () => void }) {
 
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Guard: if PUBLIC_KEY is missing (env var not set before Vercel build), show config error
+  const missingKey = !PUBLIC_KEY || PUBLIC_KEY === "undefined";
+
   useEffect(() => {
+    if (missingKey) return;
     initMercadoPago(PUBLIC_KEY, { locale: "pt-BR" });
-  }, []);
+  }, [missingKey]);
 
   const stopPolling = useCallback(() => {
     if (pollRef.current) clearInterval(pollRef.current);
@@ -216,8 +220,31 @@ export default function CheckoutModal({ onClose }: { onClose: () => void }) {
           {/* ── Conteúdo (scrollável internamente se precisar) ── */}
           <div className="flex-1 overflow-y-auto px-5 py-5">
 
+            {/* Chave pública ausente — env var não configurada no Vercel */}
+            {step === "brick" && missingKey && (
+              <div className="flex flex-col items-center gap-4 py-8">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-100 text-4xl">
+                  ⚙️
+                </div>
+                <div className="text-center space-y-2">
+                  <p className={`font-semibold ${isDark ? "text-zinc-100" : "text-slate-800"}`}>
+                    Configuração pendente
+                  </p>
+                  <p className={`text-sm ${muted}`}>
+                    A variável <code className="rounded bg-slate-100 dark:bg-zinc-800 px-1 py-0.5 text-xs font-mono">NEXT_PUBLIC_MP_PUBLIC_KEY</code> não foi encontrada.
+                  </p>
+                  <p className={`text-xs ${muted}`}>
+                    Adicione-a nas <strong>Environment Variables</strong> do Vercel e faça um novo deploy para ativar o pagamento.
+                  </p>
+                </div>
+                <button onClick={onClose} className="rounded-lg bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition">
+                  Fechar
+                </button>
+              </div>
+            )}
+
             {/* Brick de pagamento */}
-            {step === "brick" && (
+            {step === "brick" && !missingKey && (
               <div>
                 {!brickReady && (
                   <div className="flex flex-col items-center gap-3 py-10">

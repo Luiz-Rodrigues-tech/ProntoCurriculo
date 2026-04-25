@@ -13,7 +13,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Dados inválidos." }, { status: 400 });
     }
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+    // Auto-detect production URL: prefer explicit env, fall back to Vercel-provided VERCEL_URL
+    const siteUrl =
+      process.env.NEXT_PUBLIC_SITE_URL ??
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+
     // Only set notification_url for non-localhost (MP rejects localhost URLs)
     const isLocalhost = siteUrl.includes("localhost") || siteUrl.includes("127.0.0.1");
     const notificationUrl = isLocalhost ? undefined : `${siteUrl}/api/webhooks/mercadopago`;

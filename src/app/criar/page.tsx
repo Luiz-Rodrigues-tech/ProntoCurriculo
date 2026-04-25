@@ -78,7 +78,7 @@ export default function CriarPage() {
             activePanel === "form" ? "flex w-full" : "hidden"
           }`}
         >
-          <ResumeForm />
+          <ResumeForm onGoToPreview={() => setActivePanel("preview")} />
         </section>
 
         {/* Preview panel */}
@@ -113,7 +113,11 @@ export default function CriarPage() {
         <button
           onClick={() => setActivePanel("preview")}
           className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[11px] font-medium transition-colors ${
-            activePanel === "preview" ? "text-indigo-600" : "text-slate-400 dark:text-zinc-500"
+            activePanel === "preview"
+              ? "text-indigo-600"
+              : allStepsDone
+              ? "text-green-600 dark:text-green-400 animate-pulse"
+              : "text-slate-400 dark:text-zinc-500"
           }`}
         >
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={activePanel === "preview" ? 2.5 : 1.8}>
